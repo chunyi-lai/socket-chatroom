@@ -20,7 +20,7 @@ class ChatroomClient:
         args = command.split(" ")
         if args in static_info.COMMANDS:
             ## TODO logic for executing commands
-            print("To be finished")
+            print("In executeCommand - To be finished.")
 
     def userInputHandler(self, userInput):
         if self.inChatroom and self.isChatting:
