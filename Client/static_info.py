@@ -1,31 +1,40 @@
-BASIC_INSTRUCTION = """
-            ***********************************
-            * Terminal-Based Chatroom Program *
-            ***********************************
-      
-* To enter a chat room: please enter a valid room number.
-* There are 10 rooms in total, the room numbers consist from 0 to 9.
-* Once in a chat room, you can view all previous messages in this chat room.
-* To view older messages, Use the following following commands to do so.
-* To user a user command while in a chatroom, press the Esc key to enter the 
-  command prompt.
-"""
+COMMANDS = {
+  ## All user commands
+  "quit": "Quit the current chatroom while in a chatroom.",
+  "shut": "Quit the chatroom program; Can be used while in and out of a chatroom.",
+  "gotoroom": "Go to a room with the specific room number or name.",
+  "listroom": "Go to a room with the specific room number or name.",
+  "createroom": "create a room by giving a unique name. User will be prompt with a mesage to be informed if a room is created successfully.",
+  "help": "List all commands and their functionalities.", 
+}
 
-COMMAND_INSTRUCTION = """
-COMMANDS:
-  quit: quit the current chatroom while in a chatroom.
-  shut: quit the chatroom program; Can be used while in and out of a chatroom.
-  gotoroom [room number]: go to a room with the specific room number.
-  listroom: List all the available rooms.
-"""
+INFO = {
+  ## Basic instruction prompt
+  "basic": """
+              ***********************************
+              * Terminal-Based Chatroom Program *
+              ***********************************
+        
+  * To enter a chat room: please enter a valid room number.
+  * Once in a chat room, you can view all previous messages in this chat room.
+  * To view older messages, Use the following following commands to do so.
+  * To user a user command while in a chatroom, press the Esc key to enter the 
+    command prompt.
+  """,
 
-## All user commands
-QUIT = "quit"
-SHUT = "shut"
-GOTOROOM = "gotoroom"
-LISTROOM = "listroom"
-
+  ## Command instruction prompt
+  "commands": """
+  COMMANDS:
+    quit: {}
+    shut: {}
+    gotoroom [room number/name]: {}
+    listroom: {}
+    createroom [room name]: {}
+    help: {}
+  """.format(COMMANDS["quit"], COMMANDS["shut"], COMMANDS["gotoroom"], 
+    COMMANDS["listroom"], COMMANDS["createroom"], COMMANDS["help"])
+}
 
 if __name__ == "__main__":
-    print(BASIC_INSTRUCTION)
-    print(COMMAND_INSTRUCTION)
+    print(INFO["basic"])
+    print(INFO["commands"])
