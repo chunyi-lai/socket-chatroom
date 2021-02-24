@@ -1,5 +1,6 @@
 package com.chatroomserver.app;
 
+import java.lang.*;
 import java.net.*;
 import java.io.*;
 
@@ -23,5 +24,7 @@ public class App
 
         String message = bf.readLine();
         System.out.println("Client: " + message);
+
+        System.exit(0);
     }
 }

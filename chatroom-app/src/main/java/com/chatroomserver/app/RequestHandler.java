@@ -31,6 +31,7 @@ public class RequestHandler
                 .prepareStatement("INSERT INTO chatroom_db.Rooms (room_name, created_by) " +
                         "VALUES ('TEST ROOM', 'ADMIN')");
         ps.executeUpdate();
+        ps.close();
         dbConn.close();
     }
 }
