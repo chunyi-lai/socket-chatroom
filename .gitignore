@@ -1,2 +1,4 @@
 chatroom-app/target/
+chatroom-app/.idea/
+chatroom-app/chatroom-app.iml
 Client/__pycache__/

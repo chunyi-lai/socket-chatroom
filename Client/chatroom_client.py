@@ -29,3 +29,24 @@ class ChatroomClient:
         else:
             ## This is a command; execute the specific command
             self.executeCommand(userInput)
+
+if __name__ == "__main__":
+    ## bind the socket
+    try:
+        clientsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    except:
+        print("Error creating socket")
+        sys.exit()
+    print("Socket created")
+
+    ## establish client and server connection
+    host, port = socket.gethostname(), 4999
+    clientsocket.connect((host, port))
+
+    data = "Hello Server!"
+    clientsocket.send(data.encode())
+
+    # dataFromServer = clientsocket.recv(1024)
+
+    # print("Data from server: {dataFromServer}")
+    clientsocket.close()

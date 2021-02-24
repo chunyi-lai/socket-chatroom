@@ -1,13 +1,27 @@
 package com.chatroomserver.app;
 
+import java.net.*;
+import java.io.*;
+
 /**
- * Hello world!
- *
+    Server application of the chat room
  */
-public class App 
+public class App
 {
-    public static void main( String[] args )
+    public static void main( String[] args ) throws Exception
     {
-        System.out.println( "Hello World!" );
+        RequestHandler rh1 = new RequestHandler("Command");
+        rh1.insertDB();
+
+        ServerSocket appSocket = new ServerSocket(4999);
+        Socket socket1 = appSocket.accept();
+
+        System.out.println("client connected");
+
+        InputStreamReader in = new InputStreamReader(socket1.getInputStream());
+        BufferedReader bf = new BufferedReader(in);
+
+        String message = bf.readLine();
+        System.out.println("Client: " + message);
     }
 }

@@ -38,3 +38,9 @@ INFO = {
 if __name__ == "__main__":
     print(INFO["basic"])
     print(INFO["commands"])
+
+    def mergeTwoLists(listA, listB):
+      '''
+      Return the merge of listA and listB with all dupliucates eliminated
+      '''
+	  	return list(set(listA + listB))
