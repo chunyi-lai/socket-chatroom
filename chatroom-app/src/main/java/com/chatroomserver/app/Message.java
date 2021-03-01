@@ -3,13 +3,13 @@ package com.chatroomserver.app;
 public class Message {
     private Integer messageId;
     private Integer roomId;
-    private Integer username;
-    private Integer messageContent;
+    private String username;
+    private String messageContent;
 
     /**
      * Constructor
      */
-    public Message(Integer messageId, Integer roomId, Integer username, Integer messageContent) {
+    public Message(Integer messageId, Integer roomId, String username, String messageContent) {
         this.messageId = messageId;
         this.roomId = roomId;
         this.username = username;
@@ -34,19 +34,19 @@ public class Message {
         this.roomId = roomId;
     }
 
-    public Integer getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(Integer username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public Integer getMessageContent() {
+    public String getMessageContent() {
         return messageContent;
     }
 
-    public void setMessageContent(Integer messageContent) {
+    public void setMessageContent(String messageContent) {
         this.messageContent = messageContent;
     }
 

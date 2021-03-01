@@ -36,9 +36,6 @@ public class DatabaseHandler {
         catch (SQLException e) {
             throw e;
         }
-        finally {
-            return false;
-        }
     }
 
     /**
@@ -57,15 +54,13 @@ public class DatabaseHandler {
             queryStatement.setString(2, createdBy);
             queryStatement.executeUpdate();
             this.conn.commit(); //Commit the transaction
+            queryStatement.close();
             return true;
         }
         catch (SQLException e) {
             //Transaction rollback in case of errors
             this.conn.rollback();
             throw e;
-        }
-        finally {
-            return false;
         }
     }
 
@@ -92,6 +87,10 @@ public class DatabaseHandler {
 
             //Commit the transaction
             this.conn.commit();
+
+            deleteMessagesQuery.close();
+            deleteRoomQuery.close();
+
             return true;
         }
         catch (SQLException e) {
@@ -99,8 +98,40 @@ public class DatabaseHandler {
             this.conn.rollback();
             throw e;
         }
-        finally {
-            return false;
+    }
+
+    /**
+     *
+     * @return All chat rooms avaliable as an array list of room objects
+     * @throws SQLException
+     */
+    public ArrayList<Room> getChatrooms() throws SQLException{
+        try{
+            PreparedStatement roomQuery = this.conn
+                    .prepareStatement("SELECT * FROM chatroom_db.Rooms;");
+            ResultSet queryResult = roomQuery.executeQuery();
+
+            ArrayList Rooms = new ArrayList<Room>();
+            while(queryResult.next()) {
+                Room room = new Room(
+                        queryResult.getInt("room_id"),
+                        queryResult.getString("room_name"),
+                        queryResult.getString("created_by"),
+                        queryResult.getTimestamp("date_created")
+                );
+                Rooms.add(room);
+            }
+
+            this.conn.commit();
+
+            roomQuery.close();
+            queryResult.close();
+
+            return Rooms;
+        }
+        catch(Exception e){
+            this.conn.rollback();
+            throw e;
         }
     }
 
@@ -125,6 +156,8 @@ public class DatabaseHandler {
             insertMessage.executeUpdate();
 
             this.conn.commit();
+            insertMessage.close();
+
             return true;
         }
         catch(SQLException e) {
@@ -144,14 +177,28 @@ public class DatabaseHandler {
                             "WHERE chatroom_db.Messages.room_name = ?;");
             messagesQuery.setString(1, roomName);
             ResultSet queryResult = messagesQuery.executeQuery();
+
             this.conn.commit();
 
-            ArrayList messageObjects = new ArrayList<Message>();
+            ArrayList messages = new ArrayList<Message>();
             while (queryResult.next()) {
                 Message message = new Message(
-                        
+                        queryResult.getInt("message_id"),
+                        queryResult.getInt("room_id"),
+                        queryResult.getString("username"),
+                        queryResult.getString("message_content")
                 );
+                messages.add(message);
             }
+
+            messagesQuery.close();
+            queryResult.close();
+
+            return messages;
+        }
+        catch(SQLException e){
+            this.conn.rollback();
+            throw e;
         }
     }
 
