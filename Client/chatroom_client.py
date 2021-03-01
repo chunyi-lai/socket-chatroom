@@ -13,7 +13,7 @@ class ChatroomClient:
         self.roomID = None
         self.roomName = None
     
-    def sendMessageToServer(self):
+    def sendMessageToServer(self, message):
         print("Message sent")
     
     def executeCommand(self, command):

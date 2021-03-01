@@ -27,11 +27,11 @@ public class RequestHandler
                 .getConnection("jdbc:mysql://localhost:3306/chatroom_db",
                         "vagrant", "Vagrantadmin123!");
 //        Statement statement = dbConn.createStatement();
-        PreparedStatement ps = dbConn
+        PreparedStatement preparedStatement = dbConn
                 .prepareStatement("INSERT INTO chatroom_db.Rooms (room_name, created_by) " +
                         "VALUES ('TEST ROOM', 'ADMIN')");
-        ps.executeUpdate();
-        ps.close();
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
         dbConn.close();
     }
 }

@@ -12,7 +12,7 @@ public class App
     public static void main( String[] args ) throws Exception
     {
         RequestHandler rh1 = new RequestHandler("Command");
-        rh1.insertDB();
+//        rh1.insertDB();
 
         ServerSocket appSocket = new ServerSocket(4999);
         Socket socket1 = appSocket.accept();
