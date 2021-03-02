@@ -7,5 +7,5 @@ CREATE TABLE Messages (
     username VARCHAR(255) NOT NULL,
     message_content VARCHAR(1023), 
     PRIMARY KEY(message_id),
-    FOREIGN KEY(room_id) REFERENCES rooms(room_id)
+    FOREIGN KEY(room_id) REFERENCES Rooms(room_id)
 );

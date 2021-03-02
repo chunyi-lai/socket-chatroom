@@ -5,6 +5,7 @@ COMMANDS = {
   "gotoroom": "Go to a room with the specific room number or name.",
   "listroom": "Go to a room with the specific room number or name.",
   "createroom": "create a room by giving a unique name. User will be prompt with a mesage to be informed if a room is created successfully.",
+  "deleteroom": "Delete a room by the room's room name. User will be prompt with a mesage to be informed if a room is deleted successfully.",
   "help": "List all commands and their functionalities.", 
 }
 

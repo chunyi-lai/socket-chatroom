@@ -30,7 +30,21 @@ public class DatabaseHandler {
     public boolean setupDBConnection() throws SQLException{
         try {
             this.conn = DriverManager.getConnection(url, user, password);
-            this.conn.setAutoCommit(false); //disable auto commit
+            return true;
+        }
+        catch (SQLException e) {
+            throw e;
+        }
+    }
+
+    /**
+     *
+     * @return true if the DBconnection is closed properly
+     * @throws SQLException
+     */
+    public boolean closeDBConnection() throws SQLException{
+        try {
+            this.conn.close();
             return true;
         }
         catch (SQLException e) {
@@ -47,6 +61,7 @@ public class DatabaseHandler {
      */
     public boolean createChatRoom(String roomName, String createdBy) throws SQLException{
         try {
+            this.conn.setAutoCommit(false);
             PreparedStatement queryStatement = this.conn
                     .prepareStatement("INSERT INTO chatroom_db.Rooms (room_name, created_by) "
                             + "VALUES (?, ?);");
@@ -72,10 +87,11 @@ public class DatabaseHandler {
      */
     public boolean removeChatroom(String roomName) throws SQLException {
         try {
+            this.conn.setAutoCommit(false);
             // Remove all messages from the room that is to be deleted
             PreparedStatement deleteMessagesQuery = this.conn
                     .prepareStatement("DELETE FROM chatroom_db.Messages WHERE room_id in " +
-                            "(SELECT room_id FROM chatroomdb.chatroom_db room_name = ?);");
+                            "(SELECT room_id FROM chatroom_db.Rooms WHERE room_name=?);");
             deleteMessagesQuery.setString(1, roomName);
             deleteMessagesQuery.executeUpdate();
 
@@ -102,11 +118,47 @@ public class DatabaseHandler {
 
     /**
      *
+     * @return true if the chatrooms are
+     * @throws SQLException
+     */
+    public boolean removeRoomOlderThan7Days() throws SQLException {
+        try {
+            this.conn.setAutoCommit(false);
+
+            //Remove messages in that chat room
+            PreparedStatement deleteMessagesQuery = this.conn
+                    .prepareStatement("DELETE FROM chatroom_db.Messages WHERE chatroom_db.Messages.room_id IN " +
+                            "(SELECT room_id FROM chatroom_db.Rooms WHERE date_created < now() - INTERVAL 7 DAY);");
+            deleteMessagesQuery.executeUpdate();
+
+            //Remove chatrooms that are older than 7 days
+            PreparedStatement deleteRoomsQuery = this.conn
+                    .prepareStatement("DELETE FROM chatroom_db.Rooms " +
+                            "WHERE date_created < now() - INTERVAL 7 DAY;");
+            deleteRoomsQuery.executeUpdate();
+
+            //Commit the transaction
+            this.conn.commit();
+
+            deleteMessagesQuery.close();
+            deleteRoomsQuery.close();
+
+            return true;
+        }
+        catch(SQLException e) {
+            this.conn.rollback();
+            throw e;
+        }
+    }
+
+    /**
+     *
      * @return All chat rooms avaliable as an array list of room objects
      * @throws SQLException
      */
     public ArrayList<Room> getChatrooms() throws SQLException{
         try{
+            this.conn.setAutoCommit(false);
             PreparedStatement roomQuery = this.conn
                     .prepareStatement("SELECT * FROM chatroom_db.Rooms;");
             ResultSet queryResult = roomQuery.executeQuery();
@@ -142,17 +194,21 @@ public class DatabaseHandler {
     /**
      *
      * @param message Message to be stored in a database
-     * @param sendBy Username of the user who sends the message
+     * @param sentBy Username of the user who sends the message
      * @param roomName The name of the chatroom that the message is sent to
      * @return True if the message is stored successfully, false otherwise
      * @throws SQLException
      */
-    public boolean placeMessage(String message, String sendBy, String roomName) throws SQLException {
+    public boolean placeMessage(String message, String sentBy, String roomName) throws SQLException {
         try{
+            this.conn.setAutoCommit(false);
             PreparedStatement insertMessage = this.conn
                     .prepareStatement("INSERT INTO chatroom_db.Messages (username, message_content, room_id) " +
                             "VALUES (?, ?, (SELECT room_id FROM chatroom_db.Rooms " +
-                            "WHERE room_name = ? LIMIT 0, 1));");
+                            "WHERE chatroom_db.Rooms.room_name = ? LIMIT 0, 1));");
+            insertMessage.setString(1, sentBy);
+            insertMessage.setString(2, message);
+            insertMessage.setString(3, roomName);
             insertMessage.executeUpdate();
 
             this.conn.commit();
@@ -164,17 +220,21 @@ public class DatabaseHandler {
             this.conn.rollback();
             throw e;
         }
-        finally {
-            return false;
-        }
     }
 
+    /**
+     * Obtain all the message objects from a specific message room
+     * @param roomName Name of the room that the message is in
+     * @return List of all rooms in an ArrayList
+     * @throws SQLException
+     */
     public ArrayList<Message> getMessagesFromRoom(String roomName) throws SQLException {
         try{
+            this.conn.setAutoCommit(false);
             PreparedStatement messagesQuery = this.conn
                     .prepareStatement("SELECT * FROM chatroom_db.Messages JOIN chatroom_db.Rooms " +
                             "ON chatroom_db.Messages.room_id = chatroom_db.Rooms.room_id " +
-                            "WHERE chatroom_db.Messages.room_name = ?;");
+                            "WHERE chatroom_db.Rooms.room_name = ?;");
             messagesQuery.setString(1, roomName);
             ResultSet queryResult = messagesQuery.executeQuery();
 
