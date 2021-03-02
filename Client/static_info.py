@@ -6,7 +6,10 @@ COMMANDS = {
   "listroom": "Go to a room with the specific room number or name.",
   "createroom": "create a room by giving a unique name. User will be prompt with a mesage to be informed if a room is created successfully.",
   "deleteroom": "Delete a room by the room's room name. User will be prompt with a mesage to be informed if a room is deleted successfully.",
-  "help": "List all commands and their functionalities.", 
+  "help": "List all commands and their functionalities.",
+  "sendmessage": "Sends the message to the chatroom",
+  "deleteroom": "Delete the selected room"
+
 }
 
 INFO = {
@@ -26,14 +29,14 @@ INFO = {
   ## Command instruction prompt
   "commands": """
   COMMANDS:
-    quit: {}
-    shut: {}
     gotoroom [room number/name]: {}
     listroom: {}
     createroom [room name]: {}
+    sendmessage [message]: {}
+    deleteroom [room name]: {}
     help: {}
-  """.format(COMMANDS["quit"], COMMANDS["shut"], COMMANDS["gotoroom"], 
-    COMMANDS["listroom"], COMMANDS["createroom"], COMMANDS["help"])
+  """.format(COMMANDS["gotoroom"], COMMANDS["listroom"], COMMANDS["createroom"], 
+  COMMANDS["sendmessage"], COMMANDS["deleteroom"],COMMANDS["help"])
 }
 
 if __name__ == "__main__":

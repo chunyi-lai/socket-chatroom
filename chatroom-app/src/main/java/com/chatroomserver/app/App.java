@@ -3,6 +3,7 @@ package com.chatroomserver.app;
 import java.lang.*;
 import java.net.*;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -28,20 +29,20 @@ public class App extends Thread
             this.socket = this.appSocket.accept();
 
             // Establish the buffer reader
-            InputStreamReader in = new InputStreamReader(socket.getInputStream());
+            InputStreamReader in = new InputStreamReader(this.socket.getInputStream());
             BufferedReader bufferedReader = new BufferedReader(in);
 
             //Extract the message from the buffer reader
-            String userInput = bufferedReader.readLine();
+            String userInput = "";
+            userInput = bufferedReader.readLine();
             System.out.println("User Input: " + userInput);
 
-            this.appSocket.close();
-            this.socket.close();
-
+            //Close input stream
+//            in.close();
             return userInput;
         }
         catch(IOException e){
-            System.out.println(e.getStackTrace());
+            System.out.println(e.getMessage());
             throw e;
         }
     }
@@ -87,10 +88,11 @@ public class App extends Thread
                 default:
                     break;
             }
+            System.out.println("Server Response: " + responseMessage);
             return responseMessage;
         }
         catch (SQLException e) {
-            System.out.println(e.getStackTrace());
+            System.out.println(e.getMessage());
 
             return "Error encountered during action: " + e.getMessage();
         }
@@ -101,16 +103,40 @@ public class App extends Thread
      * @return true if the response is sent successfully
      * @throws IOException
      */
-    public boolean sendResponseToClient() throws IOException{
-        //todo: finish funcitonality of this function
-        return false;
+    public void sendResponseToClient(String serverResponse) throws IOException{
+        try {
+            ObjectOutputStream out = new ObjectOutputStream(this.socket.getOutputStream());
+
+//            byte[] serverResponseBytes = serverResponse.getBytes(StandardCharsets.UTF_8);
+//            String utf8Response = new String(serverResponseBytes, StandardCharsets.UTF_8);
+//            System.out.println(utf8Response);
+            out.writeObject(serverResponse);
+
+            // close the response
+//            out.close();
+        }
+        catch(IOException e) {
+            System.out.println(e.getMessage());
+            throw e;
+        }
+    }
+
+    public void closeSocketConnections() throws IOException{
+        try{
+            this.appSocket.close();
+            this.socket.close();
+        }
+        catch(IOException e){
+            System.out.println("Error encountered while closing the socket interfaces");
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void run() {
 
+        System.out.println("Chatroom Server Starting...");
         while(true) {
-
             try {
                 // Create the database handler
                 databaseHandler = new DatabaseHandler(url, username, password);
@@ -118,16 +144,20 @@ public class App extends Thread
 
                 String socketClientMessage = this.getSocketClientMessage();
                 String serverResponse = this.executeUserInput(socketClientMessage);
-//                this.socket.send
-                boolean responseSent = this.sendResponseToClient();
 
+//                System.out.println(serverResponse);
+
+                sendResponseToClient(serverResponse);
+
+                // Close socket and database connections
+                this.closeSocketConnections();
                 databaseHandler.closeDBConnection();
 
-                System.exit(0);
+//                System.exit(0);
 
             } catch (Exception e) {
                 System.out.println("Error while creating the App");
-                System.out.println(e);
+                System.out.println(e.getMessage());
                 System.exit(0);
             }
         }
