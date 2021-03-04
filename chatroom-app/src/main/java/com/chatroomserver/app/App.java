@@ -106,14 +106,7 @@ public class App extends Thread
     public void sendResponseToClient(String serverResponse) throws IOException{
         try {
             ObjectOutputStream out = new ObjectOutputStream(this.socket.getOutputStream());
-
-//            byte[] serverResponseBytes = serverResponse.getBytes(StandardCharsets.UTF_8);
-//            String utf8Response = new String(serverResponseBytes, StandardCharsets.UTF_8);
-//            System.out.println(utf8Response);
             out.writeObject(serverResponse);
-
-            // close the response
-//            out.close();
         }
         catch(IOException e) {
             System.out.println(e.getMessage());
@@ -145,15 +138,9 @@ public class App extends Thread
                 String socketClientMessage = this.getSocketClientMessage();
                 String serverResponse = this.executeUserInput(socketClientMessage);
 
-//                System.out.println(serverResponse);
-
                 sendResponseToClient(serverResponse);
-
-                // Close socket and database connections
                 this.closeSocketConnections();
                 databaseHandler.closeDBConnection();
-
-//                System.exit(0);
 
             } catch (Exception e) {
                 System.out.println("Error while creating the App");
